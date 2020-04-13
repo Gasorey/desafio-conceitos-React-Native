@@ -1,4 +1,6 @@
-![android emulator](desafio-4.gif)
+ <h1> Aplicação em funcionamento</h1>
+ 
+ ![android emulator](desafio-4.gif)
 
 # desafio-conceitos-React-Native
 Desafio desenvolvido pela RocketSeat para treinar os conceitos do desenvolvimento mobile do React Native
