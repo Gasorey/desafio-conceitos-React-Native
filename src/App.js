@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   SafeAreaView,
@@ -10,61 +10,131 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import api from "./services/api";
+
 export default function App() {
+  const [repositories, setRepositories] = useState([]);
+
+  useEffect(()=>{
+    api.get('repositories').then(response=>{
+      setRepositories(response.data);
+    })
+  } , []);
+
+  async function handleAddRepository(){
+    const response = await api.post('repositories',{
+      title: `Novo Projeto${Date.now()}`,
+      url: 'https://github.com/Gasorey/desafio-conceitos-React-Native',
+      owner:'Gabriel Asorey',
+      techs:['Node.JS','React-Native']
+    });
+    const repository = response.data
+    setRepositories([...repositories, repository])
+  }
+
+
   async function handleLikeRepository(id) {
     // Implement "Like Repository" functionality
+   const response =  await api.post(`repositories/${id}/like`)
+   
+  const likedRepository = response.data;
+    console.log()
+   const newRepository = repositories.map(repository=> {
+     if (repository.id === id) {
+      return likedRepository;
+     }else{
+       return repository;
+     }
+    });
+    setRepositories(newRepository)
   }
 
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
-      <SafeAreaView style={styles.container}>
-        <View style={styles.repositoryContainer}>
-          <Text style={styles.repository}>Repository 1</Text>
+      <SafeAreaView style={styles.container1}>
+      <FlatList 
+        style={styles.repositoryContainer1}
+        data={repositories}
+        keyExtractor={repository => repository.id}
+        renderItem={({ item: repository }) => (
+          <>
+            <Text style={styles.repoTitle}>{repository.title}</Text>
+            <View style={styles.techsContainer}>
+            {repository.techs.map(tech =>(
+            <Text style={styles.tech} key={tech}>
+            {tech}
+            </Text>))}
+           
+            </View>
+            <View style={styles.likesContainer}>
+              <Text
+               style={styles.likeText}
+               testID={`repository-likes-${repository.id}`}
+            >{repository.likes} curtida{repository.likes > 1 ? 's': ''}</Text>
+            </View>
 
-          <View style={styles.techsContainer}>
-            <Text style={styles.tech}>
-              ReactJS
-            </Text>
-            <Text style={styles.tech}>
-              Node.js
-            </Text>
-          </View>
-
-          <View style={styles.likesContainer}>
-            <Text
-              style={styles.likeText}
-              // Remember to replace "1" below with repository ID: {`repository-likes-${repository.id}`}
-              testID={`repository-likes-1`}
-            >
-              3 curtidas
-            </Text>
-          </View>
-
-          <TouchableOpacity
+            <TouchableOpacity 
             style={styles.button}
-            onPress={() => handleLikeRepository(1)}
-            // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
-            testID={`like-button-1`}
+            onPress={()=>handleLikeRepository(repository.id)}
+            testID={`like-button-${repository.id}`}
+            >
+              <Text style={styles.buttonText}>Curtir</Text>
+            </TouchableOpacity>
+          </>
+          )}
+      />
+      </SafeAreaView>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.repositoryContainer2}>
+          <TouchableOpacity
+          style={styles.button}
+          onPress={handleAddRepository}
+          
+          
+          
           >
-            <Text style={styles.buttonText}>Curtir</Text>
-          </TouchableOpacity>
-        </View>
+            <Text style={styles.addText}>Adicionar novo projeto</Text>
+          </TouchableOpacity> 
+        </View> 
       </SafeAreaView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: {   
+   flex:0, 
     backgroundColor: "#7159c1",
+    
   },
-  repositoryContainer: {
+  repoTitle:{
+    fontSize:22,
+    fontWeight: 'bold',
+  },
+  repositoryContainer1: {
+    flex:0,
+    marginBottom: 15,
+    marginHorizontal: 15,
+    backgroundColor: "#fff",
+    padding: 25,
+  },
+  repositoryContainer2: {
+    flex:1/2,
     marginBottom: 15,
     marginHorizontal: 15,
     backgroundColor: "#fff",
     padding: 20,
+    marginTop:600,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent:'center',
+  
+
+  },
+  addText:{
+    fontWeight: 'bold',
+    fontSize: 24,
   },
   repository: {
     fontSize: 32,
@@ -95,6 +165,9 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    
   },
   buttonText: {
     fontSize: 14,
@@ -104,4 +177,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#7159c1",
     padding: 15,
   },
-});
+})
