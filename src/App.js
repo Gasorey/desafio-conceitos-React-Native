@@ -52,9 +52,12 @@ export default function App() {
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
-      <SafeAreaView style={styles.container1}>
+      <SafeAreaView style={styles.maxcontainer}>
+
+      
+      <SafeAreaView style={styles.container}>
       <FlatList 
-        style={styles.repositoryContainer1}
+        style={styles.repositoryContainer}
         data={repositories}
         keyExtractor={repository => repository.id}
         renderItem={({ item: repository }) => (
@@ -85,47 +88,52 @@ export default function App() {
           )}
       />
       </SafeAreaView>
+      {/* Adicionar novo projeto */}
       <SafeAreaView style={styles.container}>
         <View style={styles.repositoryContainer2}>
           <TouchableOpacity
           style={styles.button}
           onPress={handleAddRepository}
-          
-          
-          
           >
             <Text style={styles.addText}>Adicionar novo projeto</Text>
           </TouchableOpacity> 
         </View> 
+      </SafeAreaView>
       </SafeAreaView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {   
-   flex:0, 
-    backgroundColor: "#7159c1",
+  maxcontainer: {   
+   flex:1,
+   backgroundColor: "#7159c1",
+   
     
   },
-  repoTitle:{
-    fontSize:22,
-    fontWeight: 'bold',
+  container:{
+    height:650,
   },
-  repositoryContainer1: {
-    flex:0,
+  repoTitle:{
+    fontSize:24,
+    fontWeight: 'bold',
+
+  },
+  repositoryContainer: { 
+  
     marginBottom: 15,
     marginHorizontal: 15,
     backgroundColor: "#fff",
     padding: 25,
+    
   },
-  repositoryContainer2: {
-    flex:1/2,
+  repositoryContainer2: { 
+    
     marginBottom: 15,
     marginHorizontal: 15,
     backgroundColor: "#fff",
-    padding: 20,
-    marginTop:600,
+    
+    
     borderRadius: 20,
     alignItems: 'center',
     justifyContent:'center',
